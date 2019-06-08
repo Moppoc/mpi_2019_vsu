@@ -61,7 +61,7 @@ void main(int argc, char *argv[])
                 }
                 i++;
             } 
-            MPI_Gather(ok, 1,  MPI_INT, res, 1, MPI_INT,0, MPI_COMM_WORLD);
+            MPI_Gather(&ok, 1,  MPI_INT, res, 1, MPI_INT,0, MPI_COMM_WORLD);
             if (myid == 0)
 			{
 				ok=0;
