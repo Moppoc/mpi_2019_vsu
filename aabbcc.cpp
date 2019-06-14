@@ -10,7 +10,7 @@ void main(int argc, char *argv[])
 	const int m=20;
     int   myid, numprocs, i;
     char a[m];//строка, которую будем передавать
-	int s;
+	MPI_Aint s;
 	int TAG=0;
 	int count;
 	MPI_Datatype sect,dub;
