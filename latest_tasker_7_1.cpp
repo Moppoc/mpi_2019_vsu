@@ -41,10 +41,10 @@ void main(int argc, char *argv[])
 		buf_matr[2][4] = 2;
 
 		buf_matr[3][0] = 3;
-		buf_matr[3][1] = 1;
-		buf_matr[3][2] = 3;
+		buf_matr[3][1] = 3;
+		buf_matr[3][2] = 1;
 		buf_matr[3][3] = 1;
-		buf_matr[3][4] = 1;
+		buf_matr[3][4] = 6;
 
 		for (i = 0; i < n; i++) {
 			cout << endl;
