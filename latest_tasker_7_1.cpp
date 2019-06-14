@@ -11,9 +11,9 @@ void main(int argc, char *argv[])
 	const int k = 3;
 	int  myid, numprocs, i, j, jj;
 	int buf_matr[n][m];
-        int buf_str[m];
+	int buf_str[m];
 	int temp_str[k];
-        int res[n];
+	int res[n];
 	int ok;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
@@ -22,24 +22,51 @@ void main(int argc, char *argv[])
 	{
 		printf("Enter matr\n");
 		fflush(stdout);
-                for (i = 0; i<n; i++)
+		buf_matr[0][0] = 3;
+		buf_matr[0][1] = 1;
+		buf_matr[0][2] = 1;
+		buf_matr[0][3] = 1;
+		buf_matr[0][4] = 1;
 
-			for (j = 0; j<m; j++)
+		buf_matr[1][0] = 1;
+		buf_matr[1][1] = 3;
+		buf_matr[1][2] = 1;
+		buf_matr[1][3] = 1;
+		buf_matr[1][4] = 6;
 
-				cin >> buf_matr[i][j];
-		for (i = 0; i<n; i++)
+		buf_matr[2][0] = 3;
+		buf_matr[2][1] = 1;
+		buf_matr[2][2] = 1;
+		buf_matr[2][3] = 3;
+		buf_matr[2][4] = 2;
 
-		{
-			for (j = 0; j<m; j++)
-			cout << buf_matr[i, j] << "   ";
+		buf_matr[3][0] = 3;
+		buf_matr[3][1] = 1;
+		buf_matr[3][2] = 3;
+		buf_matr[3][3] = 1;
+		buf_matr[3][4] = 1;
+
+		for (i = 0; i < n; i++) {
 			cout << endl;
+			for (j = 0; j < m; j++)
+				cout << buf_matr[i][j]<<" ";
 		}
+
+		cout << endl;
+
+		//for (i = 0; i<n; i++)
+
+	/*	{
+			for (j = 0; j<m; j++)
+				cout << buf_matr[i, j] << "   ";
+			cout << endl;
+		}*/
 		printf("Enter temp_str\n");
 
 		fflush(stdout);
 
 		for (i = 0; i<k; i++)
-		cin >> temp_str[i];
+			cin >> temp_str[i];
 	}
 
 	MPI_Scatter(buf_matr, m, MPI_INT, buf_str, m, MPI_INT, 0, MPI_COMM_WORLD);
@@ -65,14 +92,14 @@ void main(int argc, char *argv[])
 
 				{
 					j++;
-                                        jj++;
+					jj++;
 				}
 				else ok = 0;
 			}
 		}
 		i++;
 	}
-MPI_Gather(&ok, 1, MPI_INT, res, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Gather(&ok, 1, MPI_INT, res, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 
 	if (myid == 0)
@@ -88,13 +115,12 @@ MPI_Gather(&ok, 1, MPI_INT, res, 1, MPI_INT, 0, MPI_COMM_WORLD);
 			if (res[i] == 1)
 
 			{
-                                ok = 1;
-				cout << i << '  ';
+				ok = 1;
+				cout << i << " " << endl;
 			}
 		if (ok == 0)
-		cout << "not found";
+			cout << "not found";
 		cout << endl;
 	}
-
 	MPI_Finalize();
 }
