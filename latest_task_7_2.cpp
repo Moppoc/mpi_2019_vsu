@@ -12,7 +12,7 @@ void main(int argc, char *argv[])
 	int *buf_str;
 	int *temp_str;
 	int *res;
-	int *res_i;
+	int res_i[m]; //результаты поиска для одной строки
 	int ok;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
@@ -21,7 +21,6 @@ void main(int argc, char *argv[])
 	buf_str = (int*)malloc(m*sizeof(int));
 	int k = 3;
 	temp_str = (int*)malloc(k*sizeof(int));
-	res_i == (int*)malloc(m*sizeof(int));
 	if (myid == 0)
 	{
 		printf("Enter matr\n");
