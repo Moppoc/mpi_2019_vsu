@@ -3,47 +3,80 @@
 #include <stdlib.h>
 #include <iostream>
 using namespace std;
-//поиск строки-образца в матрице
-void main(int argc, char *argv[])
+
+void main(int argc, char* argv[])
 {
 	const int m = 5;
-	int  n, myid, numprocs, i, j, jj;
-	int *buf_matr;
-	int *buf_str;
-	int *temp_str;
-	int *res;
-	int res_i[m]; //результаты поиска для одной строки
-	int ok;
+	const int n = 4;
+	const int k = 3;
+	int  myid, numprocs, i, j, jj;
+	int buf_matr[n][m];
+	int buf_str[m];
+	int temp_str[k];
+	int res[n];
+	int res_i[m];
+	int max_all, min_all;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-	n = numprocs;
 	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-	buf_str = (int*)malloc(m*sizeof(int));
-	int k = 3;
-	temp_str = (int*)malloc(k*sizeof(int));
 	if (myid == 0)
 	{
 		printf("Enter matr\n");
 		fflush(stdout);
-		buf_matr = (int*)malloc(n*m*sizeof(int));
-		res = (int*)malloc(n*m*sizeof(int));
-		for (i = 0; i < n*m; i++)
-			cin >> buf_matr[i];
-		for (i = 0; i < n; i++)
-		{
-			for (j = 0; j < m; j++)
-				cout << *(buf_matr + i*m + j) << "   ";
+		buf_matr[0][0] = 3;
+		buf_matr[0][1] = 1;
+		buf_matr[0][2] = 1;
+		buf_matr[0][3] = 1;
+		buf_matr[0][4] = 1;
+
+		buf_matr[1][0] = 1;
+		buf_matr[1][1] = 3;
+		buf_matr[1][2] = 1;
+		buf_matr[1][3] = 1;
+		buf_matr[1][4] = 6;
+
+		buf_matr[2][0] = 3;
+		buf_matr[2][1] = 1;
+		buf_matr[2][2] = 1;
+		buf_matr[2][3] = 3;
+		buf_matr[2][4] = 2;
+
+		buf_matr[3][0] = 3;
+		buf_matr[3][1] = 3;
+		buf_matr[3][2] = 1;
+		buf_matr[3][3] = 1;
+		buf_matr[3][4] = 6;
+
+		for (i = 0; i < n; i++) {
 			cout << endl;
+			for (j = 0; j < m; j++)
+				cout << buf_matr[i][j] << " ";
 		}
+
+		cout << endl;
+
 		printf("Enter temp_str\n");
+
 		fflush(stdout);
+
 		for (i = 0; i < k; i++)
 			cin >> temp_str[i];
 	}
+
 	MPI_Scatter(buf_matr, m, MPI_INT, buf_str, m, MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Bcast(temp_str, k, MPI_INT, 0, MPI_COMM_WORLD);
 	for (i = 0; i < m; i++)
 		res_i[i] = 0;
+	int max = buf_str[0];
+	int min = buf_str[0];
+	for (i=0; i<n; i++)
+	if (max<buf_str[i])max=buf_str[i]
+else 
+	if (min > buf_str[i])
+		min=buf_str[i];
+	MPI_Reduce(&max,&max_all,1, MPI_INT, MPI_MAX,0,MPI_COMM_WORLD)
+	MPI_Reduce(&min,&min_all,1,MPI_INT, MPI_MIN,0,MPI_COMM_WORLD)
+	
 	i = 0;
 	ok = 0;
 	while (i <= n - k)
@@ -73,13 +106,15 @@ void main(int argc, char *argv[])
 			i++;
 	}
 	MPI_Gather(res_i, m, MPI_INT, res, m, MPI_INT, 0, MPI_COMM_WORLD);
+	
 	if (myid == 0)
+		cout << "min_max" << min_all << "-" << max_all << endl;
 	{
 		ok = 0;
 		cout << "result" << endl;
 		for (i = 0; i < n; i++)
 			for (j = 0; j < m; j++)
-				if (res[m*i + j] == 1)
+				if (res[m * i + j] == 1)
 				{
 					ok = 1;
 					cout << i << '  ' << j << endl;
