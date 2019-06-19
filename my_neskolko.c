@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
 
 	fprintf(stdout, "Process %d of %d is on %s\n",
-	myid, numprocs, processor_name);
+		myid, numprocs, processor_name);
 	fflush(stdout);
 
 
@@ -41,11 +41,18 @@ int main(int argc, char *argv[])
 		else {
 			sum = 0.0;
                         if(myid==0)
-                          from= numprocs;
-                         else from=myid-1;
-                         if(myid== numprocs-1)
+                          from= numprocs-2;
+                         else 
+                           if (myid==1)
+                               from=numprocs-1;
+                          else 
+                             from=myid-2;
+                         if(myid== numprocs-2)
                              to=0;
-                         else to=myid+1;
+                           else 
+                              if(myid== numprocs-1)
+                              to=1;
+                         else to=myid+2;
 			for (i = myid ; i <= n; i += numprocs) {
 				printf("%d %d %d\n", myid, n, i); fflush(stdout);
 				if (i == 0)
@@ -57,12 +64,20 @@ int main(int argc, char *argv[])
 					printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
 
 				}
+                                else
+                                  if(i==1)
+                                     {
+                                       prom=1/6.0;
+                                       sum=1+1/prom;
+                                       MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
+					printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
+                                       }
 				else
 				{
                                         MPI_Recv(&prom, 1, MPI_DOUBLE, from, 0, MPI_COMM_WORLD, &status);
-					prom *= 2*i*2*(i+1);
+					prom *= (2*i-2)*(2*i-1)*(2*i)*(2*i+1);
 					sum +=1/prom;
-                                        if(i<n) 
+                                        if(i<n-1) 
 					{
                                           MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
 					  printf("send %d <- %d %f\n", 3, myid, prom); fflush(stdout);
@@ -74,6 +89,7 @@ int main(int argc, char *argv[])
 					{
 						printf("send %d <- %d %f\n", to, myid, prom); fflush(stdout);
 						MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
+						// printf("send %d <- %d %f\n", to, myid, prom); fflush(stdout);
 					}
 				}
 			}
