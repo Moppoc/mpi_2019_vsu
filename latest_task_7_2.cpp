@@ -112,13 +112,13 @@ void main(int argc, char* argv[])
 		cout << "min_max" << min_all << "-" << max_all << endl;
 	{
 		ok = 0;
-		cout << "result" << endl;
+		//cout << "result" << endl;
 		for (i = 0; i < n; i++)
-			for (j = 0; j < m; j++)
+	    for (j = 0; j < m; j++)
 				if (res[m * i + j] == 1)
 				{
 					ok = 1;
-					cout << i << '  ' << j << endl;
+					//cout << i << '  ' << j << endl;
 				}
 		if (ok == 0)
 
