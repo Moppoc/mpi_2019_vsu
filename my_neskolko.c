@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	int done = 0, n, myid, numprocs, i;
 
-	double EXP=(exp(1.0)-1/exp(1.0))/2;
+	double EXP = (exp(1.0) - 1 / exp(1.0)) / 2;
 	double ryad, sum, promej, prom;
 	double startwtime = 0.0, endwtime;
 	int namelen;
@@ -40,70 +40,69 @@ int main(int argc, char *argv[])
 			done = 1;
 		else {
 			sum = 0.0;
-                        if(myid==0)
-                          from= numprocs-2;
-                         else 
-                           if (myid==1)
-                               from=numprocs-1;
-                          else 
-                             from=myid-2;
-                         if(myid== numprocs-2)
-                             to=0;
-                           else 
-                              if(myid== numprocs-1)
-                              to=1;
-                         else to=myid+2;
-			for (i = myid ; i <= n; i += numprocs) {
-				printf("%d %d %d\n", myid, n, i); fflush(stdout);
-				if (i == 0)
-				{
-					prom = 1;
-
-					sum = 1;
-					MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
-					printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
-
-				}
-                                else
-                                  if(i==1)
-                                     {
-                                       prom=1/6.0;
-                                       sum=1+1/prom;
-                                       MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
-					printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
-                                       }
+			if (myid == 0)
+				from = numprocs - 2;
+			else
+				if (myid == 1)
+					from = numprocs - 1;
 				else
-				{
-                                        MPI_Recv(&prom, 1, MPI_DOUBLE, from, 0, MPI_COMM_WORLD, &status);
-					prom *= (2*i-2)*(2*i-1)*(2*i)*(2*i+1);
-					sum +=1/prom;
-                                        if(i<n-1) 
+					from = myid - 2;
+			if (myid == numprocs - 2)
+				to = 0;
+			else
+				if (myid == numprocs - 1)
+					to = 1;
+				else to = myid + 2;
+				for (i = myid; i <= n; i += numprocs) {
+					printf("%d %d %d\n", myid, n, i); fflush(stdout);
+					if (i == 0)
 					{
-                                          MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
-					  printf("send %d <- %d %f\n", 3, myid, prom); fflush(stdout);
-                                        }
-				}
-				
+						prom = 1;
+
+						sum = 1;
+						MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
+						printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
+
+					}
+					else
+						if (i == 1)
+						{
+							prom = 1 / 6.0;
+							sum = 1 + 1 / prom;
+							MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
+							printf("send %d <- %d %f\n", 2, myid, prom); fflush(stdout);
+						}
+						else
+						{
+							MPI_Recv(&prom, 1, MPI_DOUBLE, from, 0, MPI_COMM_WORLD, &status);
+							prom *= (2 * i - 2)*(2 * i - 1)*(2 * i)*(2 * i + 1);
+							sum += 1 / prom;
+							if (i<n - 1)
+							{
+								MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
+								printf("send %d <- %d %f\n", 3, myid, prom); fflush(stdout);
+							}
+						}
+
 
 					if (i < (n - 1))
 					{
 						printf("send %d <- %d %f\n", to, myid, prom); fflush(stdout);
 						MPI_Send(&prom, 1, MPI_DOUBLE, to, 0, MPI_COMM_WORLD);
-						// printf("send %d <- %d %f\n", to, myid, prom); fflush(stdout);
 					}
 				}
-			}
-			MPI_Reduce(&sum, &ryad, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+		}
+		MPI_Reduce(&sum, &ryad, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-			if (myid == 0) {
-				printf("ryad is approximately %.16f, Error is %.16f\n",
-					ryad, fabs(ryad - EXP));
-				endwtime = MPI_Wtime();
-				printf("wall clock time = %f\n", endwtime - startwtime);
-				fflush(stdout);
-			}
+		if (myid == 0) {
+			printf("ryad is approximately %.16f, Error is %.16f\n",
+				ryad, fabs(ryad - EXP));
+			endwtime = MPI_Wtime();
+			printf("wall clock time = %f\n", endwtime - startwtime);
+			fflush(stdout);
 		}
 	}
-	MPI_Finalize();
-	return 0;
+
+MPI_Finalize();
+return 0;
 }
