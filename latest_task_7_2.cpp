@@ -14,6 +14,7 @@ void main(int argc, char* argv[])
 	int buf_str[m];
 	int temp_str[k];
 	int res[n];
+	int ok;
 	int res_i[m];
 	int max_all, min_all;
 	MPI_Init(&argc, &argv);
@@ -69,15 +70,15 @@ void main(int argc, char* argv[])
 		res_i[i] = 0;
 	int max = buf_str[0];
 	int min = buf_str[0];
-	for (i=0; i<n; i++)
-	if (max<buf_str[i])max=buf_str[i]
-else 
-	if (min > buf_str[i])
-		min=buf_str[i];
-	MPI_Reduce(&max,&max_all,1, MPI_INT, MPI_MAX,0,MPI_COMM_WORLD)
-	MPI_Reduce(&min,&min_all,1,MPI_INT, MPI_MIN,0,MPI_COMM_WORLD)
-	
-	i = 0;
+	for (i = 0; i < n; i++)
+		if (max < buf_str[i])max = buf_str[i];
+		else
+			if (min > buf_str[i]);
+				min = buf_str[i];
+	MPI_Reduce(&max, &max_all, 1, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
+	MPI_Reduce(&min, &min_all, 1, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
+
+		i = 0;
 	ok = 0;
 	while (i <= n - k)
 	{
@@ -106,7 +107,7 @@ else
 			i++;
 	}
 	MPI_Gather(res_i, m, MPI_INT, res, m, MPI_INT, 0, MPI_COMM_WORLD);
-	
+
 	if (myid == 0)
 		cout << "min_max" << min_all << "-" << max_all << endl;
 	{
